@@ -6,10 +6,11 @@ console.log("Hello! 😊");
 // 3. Set some dashboard options (width, height, etc)
 
 const url =
-  "https://public.tableau.com/views/KPIDashboardMarketing/KPIDashboard?:language=en-GB&:display_count=n&:origin=viz_share_link";
+  "https://public.tableau.com/views/LearnEmbeddedAnalytics/SalesOverviewDashboard?:language=en-GB&:display_count=n&:origin=viz_share_link";
 const vizContainer = document.getElementById("vizContainer");
 const vizOptions = {
   device: "desktop",
+  Region: ["North", "South"],
 };
 let viz;
 // 1. Grab button from HTML
@@ -42,3 +43,29 @@ pptbutton.addEventListener("click", exportPPT);
 document.getElementById("download").addEventListener("click", function () {
   viz.showDownloadDialog();
 });
+
+// Function to grab filter values and filter the viz
+
+function getRangeValues() {
+  // 1. Get the values from the input boxes
+  const minValue = document.getElementById("minValue").value;
+  const maxValue = document.getElementById("maxValue").value;
+  console.log(minValue, maxValue);
+  // get the workbook
+  const workbook = viz.getWorkbook();
+  //  get active sheet - dashboard
+  const activeSheet = workbook.getActiveSheet();
+  // get all sheets in active sheet
+  const sheets = activeSheet.getWorksheets();
+  const sheetToFilter = sheets[1];
+  console.log(sheetToFilter);
+  sheetToFilter
+    .applyRangeFilterAsync("SUM(Sales)", {
+      min: minValue,
+      max: maxValue,
+    })
+    .then(console.log("Filter applied"));
+}
+
+// Filter the dashboard for sales
+document.getElementById("filterBtn").addEventListener("click", getRangeValues);
